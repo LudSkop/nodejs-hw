@@ -4,6 +4,8 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import 'dotenv/config';
+import connectMongoDB from './db/connectMongoDB.js';
+
 //readFile('src/file.txt', 'utf-8')
 //  .then((data) => console.log(data))
 //  .catch((err) => {
@@ -18,10 +20,6 @@ const fileOperations = async () => {
 fileOperations();
 
 const app = express(); //створює екземпляр вебсерверу
-const port = Number(process.env.PORT) || 3000; //встановлює порт для сервера, використовуючи змінну середовища або 3000 за замовчуванням
-app.listen(port, () =>
-  console.log(`Server successfully started on port ${port}`),
-); //вебсервер, який слухає порт 3000 і виводить повідомлення в консоль, коли сервер запущений
 
 //app.use((req, res, next) => {
 //  console.log('second middelware');
@@ -88,3 +86,10 @@ app.use((error, req, res, next) => {
 
   res.status(500).json({ message });
 });
+await connectMongoDB(); //підключається до бази даних перед запуском сервера
+
+const PORT = Number(process.env.PORT) || 3000; //встановлює порт для сервера, використовуючи змінну середовища або 3000 за замовчуванням
+
+app.listen(PORT, () =>
+  console.log(`Server successfully started on port ${PORT}`),
+); //вебсервер, який слухає порт 3000 і виводить повідомлення в консоль, коли сервер запущений
