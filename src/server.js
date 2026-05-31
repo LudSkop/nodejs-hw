@@ -5,6 +5,8 @@ import cors from 'cors';
 import pino from 'pino-http';
 import 'dotenv/config';
 import connectMongoDB from './db/connectMongoDB.js';
+import Note from './models/note.js';
+import createHttpError from 'http-errors';
 
 //readFile('src/file.txt', 'utf-8')
 //  .then((data) => console.log(data))
@@ -61,18 +63,23 @@ const logger = pino({
 app.use(logger); //додає логування для кожного запиту
 app.use(express.json()); //додає можливість парсити JSON в тілі запиту
 
-app.get('/notes', (req, res) => {
-  console.log(req.url);
-  console.log(req.method);
-  res.json({ message: 'Retrieved all notes' });
+app.get('/notes', async (req, res) => {
+  const notes = await Note.find();
+  res.json(notes);
 });
 
-app.get('/notes/:noteId', (req, res) => {
+app.get('/notes/:noteId', async (req, res) => {
   const { noteId } = req.params;
-  res.json({ message: `Retrieved note with ID: ${noteId}` });
-});
-app.get('/test-error', (req, res) => {
-  throw new Error('Simulated server error');
+
+  const note = await Note.findOne({ _id: noteId });
+  //const note = await Note.findById(noteId); //можна так, якщо noteId є валідним ObjectId, інакше буде помилка CastError
+  if (!note) {
+    throw createHttpError(404, `Note with id ${noteId} not found`);
+    //const error = new Error(`Note with id ${noteId} not found`);
+    //error.status = 404;
+    //throw new Error();
+  }
+  res.json(note);
 });
 
 app.use((req, res) => {
@@ -83,7 +90,6 @@ app.use((req, res) => {
 app.use((error, req, res, next) => {
   const isProd = process.env.NODE_ENV === 'production';
   const message = isProd ? 'Some error' : error.message;
-
   res.status(500).json({ message });
 });
 await connectMongoDB(); //підключається до бази даних перед запуском сервера

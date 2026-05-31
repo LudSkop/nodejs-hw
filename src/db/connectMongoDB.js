@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 
 const { MONGO_URL } = process.env;
-//fblvPE0MKvxntoy5
-//mongodb+srv://luda80:fblvPE0MKvxntoy5@cluster0.ywnsp3q.mongodb.net/my-contacts?appName=Cluster0
+
 const connectMongoDB = async () => {
   try {
     await mongoose.connect(MONGO_URL);
