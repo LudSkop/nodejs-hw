@@ -9,14 +9,14 @@ import {
 
 const notesRouter = Router();
 
-notesRouter.get('/', getAllNotes);
+notesRouter.get('/notes/', getAllNotes);
 
-notesRouter.get('/:noteId', getNoteById);
+notesRouter.get('/notes/:noteId', getNoteById);
 
-notesRouter.post('/', createNote);
+notesRouter.post('/notes/', createNote);
 
-notesRouter.patch('/:noteId', updateNote);
+notesRouter.patch('/notes/:noteId', updateNote);
 
-notesRouter.delete('/:noteId', deleteNote);
+notesRouter.delete('/notes/:noteId', deleteNote);
 
 export default notesRouter;

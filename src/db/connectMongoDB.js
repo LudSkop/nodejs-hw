@@ -8,7 +8,7 @@ const connectMongoDB = async () => {
     console.log('✅ MongoDB connection established successfully');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
-    throw error; // пробрасываем ошибку дальше, чтобы сервер не запускался, если подключение к базе данных не удалось
+    process.exit(1);
   }
 };
 export default connectMongoDB;
