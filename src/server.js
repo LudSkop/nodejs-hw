@@ -2,17 +2,14 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import express from 'express';
 import cors from 'cors';
-import pino from 'pino-http';
 import 'dotenv/config';
-import connectMongoDB from './db/connectMongoDB.js';
-import Note from './models/note.js';
-import createHttpError from 'http-errors';
 
-//readFile('src/file.txt', 'utf-8')
-//  .then((data) => console.log(data))
-//  .catch((err) => {
-//    console.log('Error reading file:', err);
-//  });
+import connectMongoDB from './db/connectMongoDB.js';
+import logger from './middleware/logger.js';
+import notFoundHandler from './middleware/notFoundHandler.js';
+import errorHandler from './middleware/errorHandler.js';
+import notesRouter from './routes/notesRoutes.js';
+
 const filePath = resolve('src/file.txt'); //підставляє абсолютний шлях до файлу
 const fileOperations = async () => {
   const buffer = await readFile(filePath, 'utf-8');
@@ -22,76 +19,15 @@ const fileOperations = async () => {
 fileOperations();
 
 const app = express(); //створює екземпляр вебсерверу
+app.use(cors()); //зазвичай пишуть так в один рядок, але я розписала функцію для наглядності
 
-//app.use((req, res, next) => {
-//  console.log('second middelware');
-//  next();
-//});
-//const cors = (options = {}) => {
-//  const middelware = (req, res, next) => {
-//    res.setHeader('Access-Control-Allow-Origin', '*');
-//    res.setHeader(//
-//      'Access-Control-Allow-Methods',
-//      'GET, POST, PUT, DELETE, OPTIONS, PATCH',
-//    );
-//    res.setHeader(
-//      'Access-Control-Allow-Headers',
-//      'X-Requested-With,Content-Type',
-//    );
-//    next();
-//  };
-//  return middelware();
-//};
-//const  corsMiddleware = cors();
-//app.use(corsMiddelware);
-
-app.use(cors()); //зазвичай пишуть так в один рядок, але я розписав функцію для наглядності
-
-const logger = pino({
-  level: 'info',
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-      ignore: 'pid,hostname',
-      translateTime: 'HH:MM:ss',
-      message: '{req.method} {req.url}{req.statusCode}-{responsTime}',
-      hideObject: true,
-    },
-  },
-});
 app.use(logger); //додає логування для кожного запиту
 app.use(express.json()); //додає можливість парсити JSON в тілі запиту
+app.use('/notes', notesRouter); //додає маршрути для нотаток, всі маршрути будуть починатися з /notes
 
-app.get('/notes', async (req, res) => {
-  const notes = await Note.find();
-  res.json(notes);
-});
+app.use(notFoundHandler); //додає обробник для невідомих маршрутів, який повертає 404 помилку
+app.use(errorHandler); //додає обробник для помилок, який повертає відповідь з кодом помилки і повідомленням
 
-app.get('/notes/:noteId', async (req, res) => {
-  const { noteId } = req.params;
-
-  const note = await Note.findOne({ _id: noteId });
-  //const note = await Note.findById(noteId); //можна так, якщо noteId є валідним ObjectId, інакше буде помилка CastError
-  if (!note) {
-    throw createHttpError(404, `Note with id ${noteId} not found`);
-    //const error = new Error(`Note with id ${noteId} not found`);
-    //error.status = 404;
-    //throw new Error();
-  }
-  res.json(note);
-});
-
-app.use((req, res) => {
-  res
-    .status(404)
-    .json({ message: ` ${req.method} ${req.url} Route not found` });
-});
-app.use((error, req, res, next) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  const message = isProd ? 'Some error' : error.message;
-  res.status(500).json({ message });
-});
 await connectMongoDB(); //підключається до бази даних перед запуском сервера
 
 const PORT = Number(process.env.PORT) || 3000; //встановлює порт для сервера, використовуючи змінну середовища або 3000 за замовчуванням
