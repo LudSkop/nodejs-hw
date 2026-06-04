@@ -1,6 +1,6 @@
-# Node.js HW - 02 MongoDB
+# Node.js HW - 03 Validation
 
-This project is an Express.js server with MongoDB integration created as a homework assignment.
+This project is an Express.js server with MongoDB integration and request validation, created as a homework assignment.
 
 ## Features
 
@@ -8,6 +8,7 @@ This project is an Express.js server with MongoDB integration created as a homew
 - MongoDB connection via Mongoose
 - Basic routing (`/notes`, `/notes/:noteId`)
 - CRUD operations for notes (GET, POST, PATCH, DELETE)
+- Request body validation with Joi
 - Error handling middleware (500 responses)
 - 404 handler for unknown routes
 - Environment variables support via dotenv (PORT, MONGO_URL configuration)
@@ -19,4 +20,13 @@ This project is an Express.js server with MongoDB integration created as a homew
 ```bash
 npm install
 npm start
+```
+
+## Environment variables
+
+Create a `.env` file in the root of the project:
+
+```env
+PORT=3000
+MONGO_URL=mongodb+srv://<username>:<password>@cluster.mongodb.net/db-name
 ```
