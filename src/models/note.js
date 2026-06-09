@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import { TAGS } from '../constants/tags.js';
 
 const noteSchema = new Schema(
   {
@@ -17,23 +18,18 @@ const noteSchema = new Schema(
       type: String,
       required: false,
       trim: true,
-      enum: [
-        'Work',
-        'Personal',
-        'Meeting',
-        'Shopping',
-        'Ideas',
-        'Travel',
-        'Finance',
-        'Health',
-        'Important',
-        'Todo',
-      ],
+      enum: TAGS,
       default: 'Todo',
+      index: true,
     },
   },
   { versionKey: false, timestamps: true },
 );
 
+noteSchema.pre('faindOneAndUpdate', function () {
+  this.options({ runValidators: true, returnDocument: 'after' });
+});
+
 const Note = model('note', noteSchema);
+//export const noteSortFields = ['tag', 'search'];
 export default Note;
