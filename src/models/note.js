@@ -26,10 +26,9 @@ const noteSchema = new Schema(
   { versionKey: false, timestamps: true },
 );
 
-noteSchema.pre('faindOneAndUpdate', function () {
-  this.options({ runValidators: true, returnDocument: 'after' });
+noteSchema.pre('findOneAndUpdate', function () {
+  this.setOptions({ runValidators: true, returnDocument: 'after' });
 });
 
-const Note = model('note', noteSchema);
+export const Note = model('Note', noteSchema);
 //export const noteSortFields = ['tag', 'search'];
-export default Note;
