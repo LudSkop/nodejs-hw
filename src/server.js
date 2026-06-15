@@ -8,22 +8,26 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notesRouter from './routes/notesRoutes.js';
 import { errors } from 'celebrate';
+import { authRouter } from './routes/authRoutes.js';
+import cookieParser from 'cookie-parser';
 
-const app = express(); //створює екземпляр вебсерверу
-app.use(cors()); //зазвичай пишуть так в один рядок, але я розписала функцію для наглядності
+const app = express();
+app.use(cors());
+app.use(cookieParser());
 
-app.use(logger); //додає логування для кожного запиту
-app.use(express.json()); //додає можливість парсити JSON в тілі запиту
-app.use(notesRouter); //додає маршрути для нотаток, всі маршрути будуть починатися з /notes
+app.use(logger);
+app.use(express.json());
+app.use(authRouter);
+app.use(notesRouter);
 
-app.use(notFoundHandler); //додає обробник для невідомих маршрутів, який повертає 404 помилку
-app.use(errors()); //додає обробник для помилок валідації, який повертає 400 помилку з повідомленням про помилку валідації
-app.use(errorHandler); //додає обробник для помилок, який повертає відповідь з кодом помилки і повідомленням
+app.use(notFoundHandler);
+app.use(errors());
+app.use(errorHandler);
 
-await connectMongoDB(); //підключається до бази даних перед запуском сервера
+await connectMongoDB();
 
-const PORT = Number(process.env.PORT) || 3000; //встановлює порт для сервера, використовуючи змінну середовища або 3000 за замовчуванням
+const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, () =>
   console.log(`Server successfully started on port ${PORT}`),
-); //вебсервер, який слухає порт 3000 і виводить повідомлення в консоль, коли сервер запущений
+);
