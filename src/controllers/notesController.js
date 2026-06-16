@@ -17,10 +17,12 @@ export const getAllNotes = async (req, res) => {
   }
   const skip = (page - 1) * perPage;
 
-  const notes = await Note.find(filter).skip(skip).limit(perPage);
-
-  const totalNotes = await Note.countDocuments(filter);
+  const [notes, totalNotes] = await Promise.all([
+    Note.find(filter).skip(skip).limit(perPage),
+    Note.countDocuments(filter),
+  ]);
   const totalPages = Math.ceil(totalNotes / perPage);
+
   res.status(200).json({
     notes, // масив нотаток для поточної сторінки, який повертається з бази даних з урахуванням пагінації (skip і limit)
     totalNotes, //загальна кількість нотаток в колекції

@@ -8,7 +8,7 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notesRouter from './routes/notesRoutes.js';
 import { errors } from 'celebrate';
-import { authRouter } from './routes/authRoutes.js';
+import authRouter from './routes/authRoutes.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();

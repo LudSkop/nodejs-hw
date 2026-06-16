@@ -11,7 +11,7 @@ import {
   logoutUser,
 } from '../controllers/authController.js';
 
-export const authRouter = Router(); //створює екземпляр маршрутизатора для аутентифікації
+const authRouter = Router(); //створює екземпляр маршрутизатора для аутентифікації
 
 authRouter.post(
   '/auth/register',
@@ -31,3 +31,5 @@ authRouter.post(
 authRouter.post('/auth/refresh', refreshUserSession);
 
 authRouter.post('/auth/logout', logoutUser);
+
+export default authRouter;

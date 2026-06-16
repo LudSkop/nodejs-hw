@@ -30,6 +30,7 @@ const noteSchema = new Schema(
   },
   { versionKey: false, timestamps: true },
 );
+noteSchema.index({ userId: 1, tag: 1 });
 
 noteSchema.pre('findOneAndUpdate', function () {
   this.setOptions({ runValidators: true, returnDocument: 'after' });
