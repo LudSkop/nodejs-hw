@@ -10,6 +10,7 @@ import notesRouter from './routes/notesRoutes.js';
 import { errors } from 'celebrate';
 import authRouter from './routes/authRoutes.js';
 import cookieParser from 'cookie-parser';
+import userRouter from './routes/userRoutes.js';
 
 const app = express();
 app.use(cors());
@@ -19,6 +20,7 @@ app.use(logger);
 app.use(express.json());
 app.use(authRouter);
 app.use(notesRouter);
+app.use(userRouter);
 
 app.use(notFoundHandler);
 app.use(errors());
