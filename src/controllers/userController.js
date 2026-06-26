@@ -14,7 +14,7 @@ export const updateUserAvatar = async (req, res, next) => {
   const updatedUser = await User.findOneAndUpdate(
     { _id: user._id },
     { avatar: result.secure_url },
-    { new: true },
+    { returnDocument: 'after' },
   );
 
   res.status(200).json({ url: updatedUser.avatar });

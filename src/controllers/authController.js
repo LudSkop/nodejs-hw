@@ -96,7 +96,7 @@ export const requestResetEmail = async (req, res) => {
     { expiresIn: '15m' },
   );
   // формуємо шлях до шаблона
-  const templatePath = path.resolve('../templates/reset-password-email.html');
+  const templatePath = path.resolve('src/templates/reset-password-email.html');
   //Читаємо шаблон
   const templateSource = await fs.readFile(templatePath, 'utf-8');
   // Готуємо шаблон до заповнення

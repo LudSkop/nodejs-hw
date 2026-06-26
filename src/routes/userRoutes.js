@@ -6,7 +6,7 @@ import { upload } from '../middleware/multer.js';
 
 const userRouter = Router();
 
-userRouter.post(
+userRouter.patch(
   '/users/me/avatar',
   authenticate,
   upload.single('avatar'),
